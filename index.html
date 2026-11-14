@@ -1,0 +1,957 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Propuesta para Strategic &amp; Support | dataStudio</title>
+<meta name="description" content="Propuesta de dataStudio: Power BI conectado a la API contable, sistemas satélite para los datos en Excel y Portal BI con IA.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#001720">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Poppins:wght@400;500;600&display=swap">
+<style>
+:root{
+  --abismo:#001720; --abismo-2:#04222c; --nodo:#06323d; --petroleo:#00394e;
+  --verde-oscuro:#00635b; --verde:#037a70; --verde-claro:#4dcfc1;
+  --salvia:#ced9bd; --papel:#f4f7ef; --papel-2:#e6eddb; --tinta-suave:#314c59;
+  --rojo:#b3262b; --excel:#1d6f42; --sheets:#0f9d58; --drive:#4f6b7a;
+  --curva:cubic-bezier(.16,1,.3,1);
+  --texto:'Poppins',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --datos:'DM Mono',ui-monospace,Consolas,monospace;
+  --margen:clamp(20px,5vw,80px);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--abismo);color:var(--papel);font-family:var(--texto);font-size:16px;line-height:1.55;overflow:hidden;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+h1{font-size:clamp(2.1rem,4vw,3.6rem);max-width:14ch}
+h2{font-size:clamp(1.75rem,3.2vw,2.8rem);max-width:20ch}
+h3{font-size:clamp(1.02rem,1.35vw,1.2rem);letter-spacing:-.01em;line-height:1.3}
+p{margin:0}
+ul,ol{margin:0;padding:0}
+:focus-visible{outline:3px solid var(--verde-claro);outline-offset:3px;border-radius:8px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- Diapositivas ---------- */
+.deck{position:fixed;inset:0;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;gap:clamp(16px,3vh,32px);
+  padding:clamp(18px,3.4vw,44px) var(--margen) 92px;overflow-x:hidden;overflow-y:auto;
+  opacity:0;visibility:hidden;transform:translateX(48px);
+  transition:opacity .5s ease,transform .8s var(--curva),visibility 0s linear .8s}
+.slide.is-past{transform:translateX(-48px)}
+.slide.is-active{opacity:1;visibility:visible;transform:none;transition:opacity .5s ease .08s,transform .8s var(--curva),visibility 0s}
+.oscuro{--suave:rgba(244,247,239,.72);--linea:rgba(206,217,189,.18);color:var(--papel);background-color:var(--abismo);
+  background-image:repeating-linear-gradient(30deg,rgba(77,207,193,.05) 0 1px,transparent 1px 58px),
+                   repeating-linear-gradient(150deg,rgba(77,207,193,.05) 0 1px,transparent 1px 58px)}
+.claro{--suave:var(--tinta-suave);--linea:rgba(0,23,32,.13);color:var(--abismo);background:var(--papel)}
+.cabecera{display:flex;align-items:center;justify-content:space-between;gap:16px;flex:0 0 auto}
+.cabecera img{height:clamp(14px,1.3vw,17px);width:auto}
+.cabecera span{font-size:.85rem;color:var(--suave)}
+.cuerpo{flex:1 0 auto;display:flex;flex-direction:column;justify-content:center;gap:clamp(18px,3vh,34px)}
+.dos{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,4vw,72px);align-items:center}
+.texto{display:flex;flex-direction:column;gap:clamp(14px,2.2vh,22px)}
+.lead{font-size:clamp(1rem,1.3vw,1.16rem);color:var(--suave);max-width:46ch}
+.paso{font-family:var(--datos);font-size:.92rem;color:var(--verde-claro)}
+.claro .paso{color:var(--verde)}
+.lista{list-style:none;display:grid;gap:10px;max-width:46ch}
+.lista li{position:relative;padding-left:22px;color:var(--suave)}
+.lista li::before{content:"";position:absolute;left:0;top:.62em;width:9px;height:9px;border-radius:2px;background:var(--verde-claro);transform:rotate(45deg)}
+.lista b{color:inherit;font-weight:600}
+.oscuro .lista b{color:var(--papel)}
+.claro .lista b{color:var(--abismo)}
+@media (max-width:900px){.dos{grid-template-columns:1fr}}
+
+/* Animación genérica de piezas visuales (no de los textos) */
+.anim{opacity:0;transform:translateY(16px)}
+.is-active .anim{animation:entrar .7s var(--curva) forwards;animation-delay:calc(var(--d,0) * 1ms + var(--i,0) * 110ms)}
+@keyframes entrar{to{opacity:1;transform:none}}
+.draw{stroke-dasharray:1;stroke-dashoffset:1}
+.is-active .draw{animation:trazar 1.1s var(--curva) forwards;animation-delay:calc(var(--d,0) * 1ms)}
+@keyframes trazar{to{stroke-dashoffset:0}}
+.tarde{opacity:0}
+.is-active .tarde{animation:aparecer .6s ease forwards;animation-delay:calc(var(--d,0) * 1ms)}
+@keyframes aparecer{to{opacity:1}}
+
+/* ---------- Portada ---------- */
+.cliente{display:block;width:max-content;border-radius:16px;overflow:hidden;box-shadow:0 24px 60px -28px rgba(0,0,0,.75)}
+.cliente img{height:clamp(72px,8.5vw,108px);width:auto}
+.meta{display:flex;flex-wrap:wrap;gap:12px 36px;margin:0}
+.meta dt{font-size:.8rem;color:var(--suave)}
+.meta dd{margin:2px 0 0;font-weight:500}
+.pista{font-size:.82rem;color:var(--suave)}
+#iso{width:100%;height:auto;max-height:66vh;overflow:visible}
+.cubo{opacity:0;transform:translateY(34px)}
+.is-active .cubo{animation:subir 1s var(--curva) forwards;animation-delay:calc(var(--d) * 1ms)}
+@keyframes subir{to{opacity:1;transform:none}}
+.iso-punto{fill:var(--papel)}
+
+/* ---------- Objetivos ---------- */
+.objetivos{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.objetivo{display:grid;grid-template-rows:auto auto 1fr;gap:12px;padding:8px clamp(20px,3vw,44px) 8px 0}
+.objetivo + .objetivo{border-left:1px solid var(--linea);padding-left:clamp(20px,3vw,44px)}
+.objetivo p{color:var(--suave);max-width:40ch}
+.ico{width:120px;height:84px}
+.ico .b{transform-box:fill-box;transform-origin:bottom;transform:scaleY(0)}
+.is-active .ico .b{animation:crecer .9s var(--curva) forwards;animation-delay:calc(300ms + var(--i) * 120ms)}
+@keyframes crecer{to{transform:scaleY(1)}}
+.ico .h{opacity:0;transform:translate(var(--hx),var(--hy)) rotate(var(--hr))}
+.is-active .ico .h{animation:apilar .9s var(--curva) forwards;animation-delay:calc(300ms + var(--i) * 140ms)}
+@keyframes apilar{to{opacity:1;transform:none}}
+.puente{color:var(--suave);font-size:1.02rem}
+@media (max-width:760px){.objetivos{grid-template-columns:1fr}.objetivo + .objetivo{border-left:0;border-top:1px solid var(--linea);padding:24px 0 0}}
+
+/* ---------- Diagramas SVG ---------- */
+.lienzo{width:100%}
+.lienzo svg{width:100%;height:auto;overflow:visible}
+.caja{fill:var(--nodo);stroke:rgba(77,207,193,.38);stroke-width:1.5}
+.caja-luz{fill:var(--verde-claro);stroke:none}
+.t1{font:600 22px var(--texto);fill:var(--papel)}
+.t2{font:400 16px var(--texto);fill:rgba(244,247,239,.74)}
+.t3{font:400 14px var(--datos);fill:var(--verde-claro)}
+.oscuro-txt .t1,.oscuro-txt .t2{fill:var(--abismo)}
+.oscuro-txt .t3{fill:var(--verde-oscuro)}
+.ruta-svg{fill:none;stroke:rgba(77,207,193,.55);stroke-width:2.5;stroke-linecap:round}
+.pt{fill:var(--verde-claro);filter:drop-shadow(0 0 5px rgba(77,207,193,.9))}
+.reto circle{fill:var(--rojo)}
+.reto text{font:600 16px var(--texto);fill:#fff;text-anchor:middle}
+.cli circle{fill:var(--nodo);stroke:var(--verde-claro);stroke-width:1.5}
+.cli text{font:500 14px var(--datos);fill:var(--papel);text-anchor:middle}
+.pie-svg{font:400 15px var(--texto);fill:rgba(244,247,239,.74);text-anchor:middle}
+.retos{list-style:none;display:grid;gap:14px;counter-reset:r}
+.retos li{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;color:var(--suave)}
+.retos li::before{counter-increment:r;content:counter(r);width:30px;height:30px;border-radius:50%;background:var(--rojo);color:#fff;font-weight:600;font-size:.95rem;display:grid;place-items:center}
+.retos b{color:var(--papel);font-weight:600;display:block}
+@media (max-width:700px){.lienzo{overflow-x:auto;padding-bottom:6px}.lienzo svg{min-width:660px}.lienzo.api svg{min-width:520px}}
+
+/* ---------- Del Excel a la nube ---------- */
+.fusion{position:relative;min-height:420px;height:100%}
+.archivo{position:absolute;left:var(--x);top:var(--y);transform:rotate(var(--r));display:flex;align-items:center;gap:10px;
+  max-width:46%;padding:9px 12px 9px 10px;background:#fff;color:var(--abismo);border-radius:10px;font-size:.84rem;line-height:1.25;
+  box-shadow:0 14px 30px -16px rgba(0,0,0,.7);z-index:2}
+.archivo i{flex:0 0 26px;height:30px;border-radius:5px;display:grid;place-items:center;color:#fff;font:600 12px var(--texto);font-style:normal}
+.xls i{background:var(--excel)} .gs i{background:var(--sheets)} .drv i{background:var(--drive)}
+.is-active .archivo{animation:converger 1.15s cubic-bezier(.65,0,.35,1) forwards;animation-delay:calc(500ms + var(--i) * 130ms)}
+@keyframes converger{0%{transform:translate(0,0) rotate(var(--r));opacity:1}75%{opacity:1}100%{transform:translate(var(--tx),var(--ty)) rotate(0deg) scale(.2);opacity:0}}
+.nube{position:absolute;left:50%;top:50%;width:min(340px,86%);transform:translate(-50%,-50%) scale(.86);opacity:0;z-index:3;
+  background:var(--papel);color:var(--abismo);border-radius:20px;padding:20px 20px 18px;box-shadow:0 0 0 1px rgba(77,207,193,.5),0 30px 70px -30px rgba(0,0,0,.8)}
+.is-active .nube{animation:nube .9s var(--curva) forwards;animation-delay:1.75s}
+@keyframes nube{to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.nube__titulo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:1.1rem;margin-bottom:12px}
+.nube__titulo svg{flex:0 0 auto}
+.nube ul{list-style:none;display:grid;gap:7px}
+.nube li{display:flex;align-items:center;gap:10px;font-size:.92rem;padding:7px 10px;border-radius:9px;background:var(--papel-2);opacity:0;transform:translateX(-10px)}
+.nube li::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--verde);flex:0 0 auto}
+.is-active .nube li{animation:entrar .5s var(--curva) forwards;animation-delay:calc(2350ms + var(--i) * 150ms)}
+.nube__salida{margin-top:12px;font-size:.82rem;color:var(--verde-oscuro);font-weight:500;opacity:0}
+.is-active .nube__salida{animation:aparecer .6s ease forwards;animation-delay:3.3s}
+
+/* ---------- Portal BI + IA ---------- */
+.portal{background:#fff;color:var(--abismo);border-radius:16px;overflow:hidden;box-shadow:0 40px 90px -40px rgba(0,0,0,.85);font-size:13px}
+.portal__barra{display:flex;align-items:center;gap:6px;padding:10px 14px;background:#e9eee6;border-bottom:1px solid #dde3da}
+.portal__barra i{width:10px;height:10px;border-radius:50%;background:#c3ccbf}
+.portal__barra b{margin-left:8px;font-weight:500;font-size:12px;color:var(--tinta-suave)}
+.portal__cuerpo{display:grid;grid-template-columns:140px minmax(0,1fr) 196px;min-height:340px}
+.portal__menu{background:var(--abismo);color:var(--papel);padding:12px 10px;display:flex;flex-direction:column;gap:12px}
+.portal__menu img{border-radius:8px;width:100%}
+.portal__menu ul{list-style:none;display:grid;gap:3px}
+.portal__menu li{padding:7px 9px;border-radius:7px;font-size:12px;color:rgba(244,247,239,.68)}
+.portal__menu li.activo{background:rgba(77,207,193,.2);color:#fff}
+.portal__tablero{padding:14px;display:grid;gap:10px;align-content:start;background:#f5f7f2}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.kpi{background:#fff;border:1px solid #e1e7e0;border-radius:10px;padding:9px 10px}
+.kpi span{display:block;font-size:11px;color:var(--tinta-suave);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi b{display:block;height:8px;margin-top:9px;border-radius:4px;background:#e4eae2;overflow:hidden}
+.kpi b::after{content:"";display:block;height:100%;width:var(--v);background:var(--verde);border-radius:4px;transform:scaleX(0);transform-origin:left}
+.is-active .kpi b::after{animation:llenar 1s var(--curva) forwards;animation-delay:.5s}
+@keyframes llenar{to{transform:scaleX(1)}}
+.barras{background:#fff;border:1px solid #e1e7e0;border-radius:10px;padding:12px 12px 0;height:170px;display:flex;align-items:flex-end;gap:6px}
+.barras i{flex:1;height:var(--h);background:var(--verde);border-radius:4px 4px 0 0;transform:scaleY(0);transform-origin:bottom}
+.barras i:nth-child(n+9){background:var(--verde-claro)}
+.is-active .barras i{animation:crecer .8s var(--curva) forwards;animation-delay:calc(400ms + var(--i) * 60ms)}
+.portal__chat{border-left:1px solid #e1e7e0;padding:12px;display:flex;flex-direction:column;gap:9px}
+.chat__titulo{display:flex;align-items:center;gap:7px;font-weight:600;font-size:12px}
+.chat__titulo i{width:8px;height:8px;border-radius:50%;background:var(--verde-claro);box-shadow:0 0 0 4px rgba(77,207,193,.25)}
+.burbuja{padding:8px 10px;border-radius:12px;font-size:12px;line-height:1.45}
+.burbuja.usuario{align-self:flex-end;background:var(--abismo);color:#fff;border-bottom-right-radius:4px;max-width:92%;opacity:0}
+.is-active .burbuja.usuario{animation:entrar .5s var(--curva) forwards;animation-delay:.9s}
+.burbuja.ia{align-self:flex-start;background:#edf2ea;border-bottom-left-radius:4px;max-width:96%;position:relative;min-height:34px;opacity:0}
+.is-active .burbuja.ia{animation:aparecer .3s ease forwards;animation-delay:1.6s}
+.escribiendo{display:flex;gap:4px;position:absolute;left:10px;top:13px}
+.escribiendo i{width:6px;height:6px;border-radius:50%;background:var(--tinta-suave);animation:salto 1s infinite}
+.escribiendo i:nth-child(2){animation-delay:.15s}.escribiendo i:nth-child(3){animation-delay:.3s}
+@keyframes salto{0%,80%,100%{transform:none;opacity:.4}40%{transform:translateY(-4px);opacity:1}}
+.is-active .escribiendo{animation:ocultar .2s linear forwards;animation-delay:3s}
+@keyframes ocultar{to{opacity:0;visibility:hidden}}
+.respuesta{display:block;clip-path:inset(0 100% 0 0);opacity:0}
+.is-active .respuesta{animation:escribir 1.6s steps(28,end) forwards;animation-delay:3s}
+@keyframes escribir{0%{opacity:1;clip-path:inset(0 100% 0 0)}100%{opacity:1;clip-path:inset(0 0 0 0)}}
+.fuente{font-size:10.5px;color:var(--verde-oscuro);margin-top:4px;opacity:0}
+.is-active .fuente{animation:aparecer .5s ease forwards;animation-delay:4.7s}
+@media (max-width:1100px){.portal__cuerpo{grid-template-columns:120px minmax(0,1fr)}.portal__chat{grid-column:1/-1;border-left:0;border-top:1px solid #e1e7e0}}
+@media (max-width:520px){.portal__cuerpo{grid-template-columns:1fr}.portal__menu ul{grid-auto-flow:column;overflow-x:auto}.portal__menu img{width:120px}}
+
+/* ---------- Hoja de ruta ---------- */
+.ruta{list-style:none;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:18px;position:relative;padding-top:6px}
+.ruta::before{content:"";position:absolute;left:22px;right:22px;top:28px;height:2px;background:var(--verde-claro);opacity:.5;transform:scaleX(0);transform-origin:left}
+.is-active .ruta::before{animation:llenar 1.6s var(--curva) forwards}
+.ruta li{position:relative;display:flex;flex-direction:column;gap:8px;opacity:0;transform:translateY(12px)}
+.is-active .ruta li{animation:entrar .6s var(--curva) forwards;animation-delay:calc(200ms + var(--i) * 220ms)}
+.ruta__n{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--abismo);border:2px solid var(--verde-claro);font:500 1.05rem var(--datos);color:var(--papel)}
+.ruta li p{color:var(--suave);font-size:.92rem}
+.ruta .etq{font-size:.78rem;color:var(--verde-claro);font-family:var(--datos)}
+.ruta li.dest .ruta__n{background:var(--verde-claro);color:var(--abismo)}
+@media (max-width:1000px){.ruta{grid-template-columns:1fr 1fr 1fr}.ruta::before{display:none}}
+@media (max-width:620px){.ruta{grid-template-columns:1fr}.ruta li{display:grid;grid-template-columns:46px 1fr;column-gap:14px}.ruta li>*:not(.ruta__n){grid-column:2}.ruta__n{grid-row:1/span 3}}
+
+/* ---------- Cotización ---------- */
+.tabla{width:100%;border-collapse:collapse;font-size:.95rem}
+.tabla th,.tabla td{padding:11px 10px;border-bottom:1px solid var(--linea);text-align:left;vertical-align:top}
+.tabla thead th{font-size:.8rem;font-weight:500;color:var(--suave);padding-top:0}
+.tabla .num{text-align:right;font-family:var(--datos);white-space:nowrap}
+.tabla tfoot th,.tabla tfoot td{border-top:2px solid currentColor;border-bottom:0;font-weight:600;font-size:1.08rem;padding-top:14px}
+.nota{font-size:.85rem;color:var(--suave);margin-top:10px}
+.entregable{font-size:.95rem;color:var(--suave);max-width:46ch}
+.entregable b{color:var(--abismo);font-weight:600}
+.cifra{font-family:var(--datos);font-weight:500;letter-spacing:-.02em;line-height:1;white-space:nowrap}
+.par{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,64px);align-items:start}
+.par h3{margin:6px 0 8px;font-size:clamp(1.2rem,1.8vw,1.5rem)}
+.par .lead{margin-bottom:12px}
+.definir{border:1.5px dashed var(--verde);border-radius:16px;padding:22px 24px;display:grid;gap:8px;max-width:420px}
+.definir .cifra{font-size:clamp(2rem,4vw,3rem);color:var(--verde-oscuro)}
+@media (max-width:900px){.par{grid-template-columns:1fr}}
+@media (max-width:520px){.tabla{font-size:.86rem}.tabla th,.tabla td{padding:9px 6px}}
+
+/* Etapa 6 */
+.precio{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.precio .cifra{font-size:clamp(3.4rem,8vw,6.4rem);color:var(--verde-claro)}
+.precio .por{font-size:1.15rem;color:var(--suave)}
+.incluye{list-style:none;display:grid;gap:14px}
+.incluye li{display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start;color:var(--papel)}
+.incluye svg{margin-top:2px}
+.aclaracion{font-size:.92rem;color:var(--suave);max-width:58ch;border-left:2px solid var(--verde-claro);padding-left:14px}
+
+/* Resumen */
+.total{display:flex;flex-direction:column;gap:6px}
+.total .cifra{font-size:clamp(2.8rem,6vw,4.8rem);color:var(--verde-oscuro)}
+.total small{font-size:.95rem;color:var(--suave)}
+.mensual{display:flex;align-items:center;gap:16px;background:var(--abismo);color:var(--papel);border-radius:16px;padding:16px 20px;max-width:440px}
+.mensual .cifra{font-size:1.9rem;color:var(--verde-claro)}
+.excluye{font-size:.88rem;color:var(--suave);max-width:52ch}
+.tabla .tbd{font-family:var(--texto);font-style:italic;color:var(--suave)}
+
+/* Cierre */
+.pasos{list-style:none;display:grid;gap:14px;counter-reset:p}
+.pasos li{display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:center;font-size:1.05rem}
+.pasos li::before{counter-increment:p;content:counter(p);width:38px;height:38px;border-radius:50%;border:2px solid var(--verde-claro);display:grid;place-items:center;font:500 1rem var(--datos);color:var(--verde-claro)}
+.contacto{display:grid;gap:12px;align-content:start}
+.contacto img{height:22px;width:auto;margin-bottom:6px}
+.contacto a{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-size:1.05rem;padding:6px 0;border-bottom:1px solid var(--linea);width:max-content;max-width:100%}
+.contacto a:hover{color:var(--verde-claro)}
+.contacto p{color:var(--suave)}
+
+/* ---------- Navegación ---------- */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;gap:10px;padding:14px var(--margen) 18px;pointer-events:none;color:var(--papel)}
+.nav>*{pointer-events:auto}
+body[data-tema="claro"] .nav{color:var(--abismo)}
+.indice{margin-right:auto;font-size:.82rem;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.contador{font-family:var(--datos);font-size:.88rem;margin-right:6px;white-space:nowrap}
+.nav button{width:44px;height:44px;border-radius:50%;border:1.5px solid currentColor;background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer;transition:background .2s,color .2s,border-color .2s,opacity .2s}
+.nav button:disabled{opacity:.25;cursor:default}
+.nav button:not(:disabled):hover{background:var(--verde-claro);border-color:var(--verde-claro);color:var(--abismo)}
+.progreso{position:fixed;left:0;bottom:0;height:4px;width:100%;transform-origin:left;transform:scaleX(0);background:var(--verde-claro);transition:transform .7s var(--curva);z-index:21}
+@media (max-width:700px){
+  .nav{background:linear-gradient(to top,var(--fondo-nav,var(--abismo)) 55%,transparent)}
+  body[data-tema="claro"]{--fondo-nav:var(--papel)}
+  .indice{display:none}.contador{margin-left:auto}
+}
+
+/* ---------- Accesibilidad e impresión ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .anim,.cubo,.tarde,.ruta li,.nube li,.nube__salida,.burbuja,.respuesta,.fuente{opacity:1!important;transform:none!important;clip-path:none!important}
+  .draw{stroke-dashoffset:0!important}
+  .ico .b,.barras i,.kpi b::after,.ruta::before{transform:none!important}
+  .ico .h{opacity:1!important;transform:none!important}
+  .nube{opacity:1!important;transform:translate(-50%,-50%)!important}
+  .archivo{opacity:.35!important}
+  .escribiendo{display:none}
+}
+@page{size:landscape;margin:0}
+@media print{
+  body{overflow:visible}
+  .deck{position:static}
+  .slide{position:relative;inset:auto;opacity:1!important;visibility:visible!important;transform:none!important;min-height:100vh;overflow:visible;break-after:page;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .nav,.progreso{display:none}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .anim,.cubo,.tarde,.ruta li,.nube li,.nube__salida,.burbuja,.respuesta,.fuente{opacity:1!important;transform:none!important;clip-path:none!important}
+  .draw{stroke-dashoffset:0!important}
+  .ico .b,.barras i,.kpi b::after,.ruta::before{transform:none!important}
+  .ico .h{opacity:1!important;transform:none!important}
+  .nube{opacity:1!important;transform:translate(-50%,-50%)!important}
+  .archivo{display:none}.escribiendo{display:none}
+}
+</style>
+</head>
+<body data-tema="oscuro">
+<p class="sr" id="vivo" aria-live="polite"></p>
+<main class="deck" id="deck">
+
+<!-- 1. Portada -->
+<section class="slide oscuro portada" data-tema="oscuro" aria-roledescription="diapositiva" aria-label="Portada">
+  <header class="cabecera"><img src="assets/logo-datastudio-blanco.svg" alt="dataStudio"><span>Propuesta de servicio</span></header>
+  <div class="cuerpo dos">
+    <div class="texto">
+      <span class="cliente"><img src="assets/logo-strategic-support.png" alt="Strategic &amp; Support, Apoyo Estratégico"></span>
+      <h1>Analítica conectada para Strategic&nbsp;&amp;&nbsp;Support</h1>
+      <p class="lead">De la contabilidad de tus clientes y los Excel dispersos a un portal donde cada cliente ve su tablero y conversa con sus datos.</p>
+      <dl class="meta">
+        <div><dt>Preparada para</dt><dd>Gustavo, Strategic &amp; Support</dd></div>
+        <div><dt>Fecha</dt><dd>Noviembre de 2026</dd></div>
+      </dl>
+    </div>
+    <svg id="iso" viewBox="0 0 640 520" role="img" aria-label="Bloques isométricos que se levantan como barras de datos sobre un tablero"></svg>
+  </div>
+</section>
+
+<!-- 2. Objetivo -->
+<section class="slide oscuro" data-tema="oscuro" aria-roledescription="diapositiva" aria-label="Objetivo del servicio">
+  <header class="cabecera"><img src="assets/logo-datastudio-blanco.svg" alt="dataStudio"><span>Objetivo del servicio</span></header>
+  <div class="cuerpo">
+    <h2>Dos objetivos para un mismo tablero</h2>
+    <div class="objetivos">
+      <article class="objetivo">
+        <svg class="ico" viewBox="0 0 120 84" aria-hidden="true">
+          <rect x="0" y="80" width="120" height="2" fill="rgba(206,217,189,.35)"/>
+          <rect class="b" style="--i:0" x="8" y="48" width="18" height="32" rx="3" fill="#037a70"/>
+          <rect class="b" style="--i:1" x="36" y="30" width="18" height="50" rx="3" fill="#037a70"/>
+          <rect class="b" style="--i:2" x="64" y="38" width="18" height="42" rx="3" fill="#24a596"/>
+          <rect class="b" style="--i:3" x="92" y="10" width="18" height="70" rx="3" fill="#4dcfc1"/>
+        </svg>
+        <h3>Infraestructura analítica en Power BI</h3>
+        <p>Un modelo de datos sólido y tableros con los indicadores que mueven el negocio de tus clientes.</p>
+      </article>
+      <article class="objetivo">
+        <svg class="ico" viewBox="0 0 120 84" aria-hidden="true">
+          <g class="h" style="--i:0;--hx:-26px;--hy:-14px;--hr:-14deg"><rect x="20" y="52" width="80" height="24" rx="4" fill="#0f9d58"/><rect x="28" y="60" width="40" height="4" rx="2" fill="#fff" opacity=".8"/></g>
+          <g class="h" style="--i:1;--hx:24px;--hy:-20px;--hr:12deg"><rect x="20" y="30" width="80" height="24" rx="4" fill="#1d6f42"/><rect x="28" y="38" width="52" height="4" rx="2" fill="#fff" opacity=".8"/></g>
+          <g class="h" style="--i:2;--hx:-10px;--hy:-30px;--hr:-8deg"><rect x="20" y="8" width="80" height="24" rx="4" fill="#4dcfc1"/><rect x="28" y="16" width="30" height="4" rx="2" fill="#001720" opacity=".7"/></g>
+        </svg>
+        <h3>Sistemas ágiles para los datos satélite</h3>
+        <p>Lo que hoy vive en Excel y Google Sheets pasa a un sistema simple, donde cada cliente carga su información en orden.</p>
+      </article>
+    </div>
+    <p class="puente">Para lograrlo hay tres retos. En la siguiente diapositiva ves cómo se conectan.</p>
+  </div>
+</section>
+
+<!-- 3. Cómo se conecta todo -->
+<section class="slide oscuro" data-tema="oscuro" aria-roledescription="diapositiva" aria-label="Así se conecta todo">
+  <header class="cabecera"><img src="assets/logo-datastudio-blanco.svg" alt="dataStudio"><span>La solución completa</span></header>
+  <div class="cuerpo dos">
+    <div class="texto">
+      <h2>Así se conecta todo</h2>
+      <ol class="retos">
+        <li><span><b>Conectar la API del sistema contable</b>donde ya están todos tus clientes.</span></li>
+        <li><span><b>Construir el sistema satélite</b>para la información que hoy está en Excel y Sheets.</span></li>
+        <li><span><b>Unificar todo en el Portal BI + IA</b>con un acceso para cada cliente.</span></li>
+      </ol>
+    </div>
+    <div class="lienzo">
+      <svg viewBox="0 0 1000 540" role="img" aria-label="El sistema contable y el sistema satélite alimentan el modelo de Power BI, que se publica en el Portal BI con IA para cada cliente.">
+        <g>
+          <path id="r1" class="ruta-svg draw" pathLength="1" style="--d:500" d="M290 100 C350 100 330 250 380 250"/>
+          <path id="r2" class="ruta-svg draw" pathLength="1" style="--d:650" d="M290 430 C350 430 330 290 380 290"/>
+          <path id="r3" class="ruta-svg draw" pathLength="1" style="--d:1150" d="M610 270 C655 270 655 215 700 215"/>
+          <path id="r4" class="ruta-svg draw" pathLength="1" style="--d:1650" d="M835 280 C835 350 725 350 725 414"/>
+          <path id="r5" class="ruta-svg draw" pathLength="1" style="--d:1730" d="M835 280 C835 350 790 350 790 414"/>
+          <path id="r6" class="ruta-svg draw" pathLength="1" style="--d:1810" d="M835 280 C835 350 855 350 855 414"/>
+          <path id="r7" class="ruta-svg draw" pathLength="1" style="--d:1890" d="M835 280 C835 350 920 350 920 414"/>
+        </g>
+        <g class="anim" style="--d:100">
+          <rect class="caja" x="30" y="40" width="260" height="120" rx="18"/>
+          <text class="t1" x="54" y="86">Sistema contable</text>
+          <text class="t2" x="54" y="113">API de Contífico</text>
+          <text class="t3" x="54" y="138">contabilidad y documentos</text>
+        </g>
+        <g class="anim" style="--d:250">
+          <rect class="caja" x="30" y="370" width="260" height="120" rx="18"/>
+          <text class="t1" x="54" y="416">Sistema satélite</text>
+          <text class="t2" x="54" y="443">Lo que hoy vive en Excel</text>
+          <text class="t3" x="54" y="468">y Google Sheets</text>
+        </g>
+        <g class="anim" style="--d:900">
+          <rect class="caja" x="380" y="205" width="230" height="130" rx="18"/>
+          <text class="t1" x="402" y="256">Modelo</text>
+          <text class="t1" x="402" y="282">Power BI</text>
+          <text class="t3" x="402" y="310">indicadores y tableros</text>
+          <rect x="548" y="234" width="9" height="22" rx="2" fill="#037a70"/><rect x="561" y="224" width="9" height="32" rx="2" fill="#24a596"/><rect x="574" y="216" width="9" height="40" rx="2" fill="#4dcfc1"/>
+        </g>
+        <g class="anim oscuro-txt" style="--d:1350">
+          <rect class="caja-luz" x="700" y="150" width="270" height="130" rx="18"/>
+          <text class="t1" x="724" y="198">Portal BI + IA</text>
+          <text class="t2" x="724" y="225">Un acceso por cliente</text>
+          <text class="t3" x="724" y="252">chat con sus datos</text>
+        </g>
+        <g class="cli">
+          <g class="anim" style="--d:2050"><circle cx="725" cy="440" r="26"/><text x="725" y="445">C1</text></g>
+          <g class="anim" style="--d:2130"><circle cx="790" cy="440" r="26"/><text x="790" y="445">C2</text></g>
+          <g class="anim" style="--d:2210"><circle cx="855" cy="440" r="26"/><text x="855" y="445">C3</text></g>
+          <g class="anim" style="--d:2290"><circle cx="920" cy="440" r="26"/><text x="920" y="445">C4</text></g>
+        </g>
+        <text class="pie-svg tarde" style="--d:2400" x="822" y="500">Clientes de Strategic &amp; Support</text>
+        <g class="reto anim" style="--d:700"><circle cx="335" cy="175" r="16"/><text x="335" y="181">1</text></g>
+        <g class="reto anim" style="--d:850"><circle cx="335" cy="360" r="16"/><text x="335" y="366">2</text></g>
+        <g class="reto anim" style="--d:1300"><circle cx="655" cy="243" r="16"/><text x="655" y="249">3</text></g>
+        <g class="tarde" style="--d:2300">
+          <circle class="pt" r="5"><animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#r1" xlink:href="#r1"/></animateMotion></circle>
+          <circle class="pt" r="5"><animateMotion dur="2.4s" begin="1.2s" repeatCount="indefinite"><mpath href="#r1" xlink:href="#r1"/></animateMotion></circle>
+          <circle class="pt" r="5"><animateMotion dur="2.6s" begin=".4s" repeatCount="indefinite"><mpath href="#r2" xlink:href="#r2"/></animateMotion></circle>
+          <circle class="pt" r="5"><animateMotion dur="2.6s" begin="1.7s" repeatCount="indefinite"><mpath href="#r2" xlink:href="#r2"/></animateMotion></circle>
+          <circle class="pt" r="5"><animateMotion dur="1.4s" repeatCount="indefinite"><mpath href="#r3" xlink:href="#r3"/></animateMotion></circle>
+          <circle class="pt" r="4"><animateMotion dur="1.8s" begin=".2s" repeatCount="indefinite"><mpath href="#r4" xlink:href="#r4"/></animateMotion></circle>
+          <circle class="pt" r="4"><animateMotion dur="1.8s" begin=".6s" repeatCount="indefinite"><mpath href="#r5" xlink:href="#r5"/></animateMotion></circle>
+          <circle class="pt" r="4"><animateMotion dur="1.8s" begin="1s" repeatCount="indefinite"><mpath href="#r6" xlink:href="#r6"/></animateMotion></circle>
+          <circle class="pt" r="4"><animateMotion dur="1.8s" begin="1.4s" repeatCount="indefinite"><mpath href="#r7" xlink:href="#r7"/></animateMotion></circle>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Reto 1 -->
+<section class="slide oscuro" data-tema="oscuro" aria-roledescription="diapositiva" aria-label="Reto 1: conectar la API del sistema contable">
+  <header class="cabecera"><img src="assets/logo-datastudio-blanco.svg" alt="dataStudio"><span>Reto 1 de 3</span></header>
+  <div class="cuerpo dos">
+    <div class="texto">
+      <span class="paso">Reto 1 de 3</span>
+      <h2>Conectarnos a la API de tu sistema contable</h2>
+      <p class="lead">Tus clientes ya están en Contífico. Nos conectamos a su API en modo solo lectura, empresa por empresa, para llevar la contabilidad a Power BI sin digitar ni exportar nada.</p>
+      <ul class="lista">
+        <li><b>Asientos y plan de cuentas:</b> estados financieros.</li>
+        <li><b>Ventas, compras, cobros y retenciones:</b> cartera e impuestos.</li>
+        <li><b>Bancos, clientes y proveedores:</b> flujo y seguimiento.</li>
+        <li>La solicitud de acceso al proveedor ya está redactada y lista para enviar.</li>
+      </ul>
+    </div>
+    <div class="lienzo api">
+      <svg viewBox="0 0 600 440" role="img" aria-label="Cinco tipos de datos de Contífico fluyen hacia el modelo de Power BI">
+        <g class="anim" style="--d:100">
+          <rect class="caja" x="10" y="20" width="230" height="400" rx="20"/>
+          <text class="t1" x="34" y="62">Contífico</text>
+          <text class="t3" x="34" y="86">una conexión por empresa</text>
+        </g>
+        <g fill="rgba(77,207,193,.12)" stroke="rgba(77,207,193,.45)" stroke-width="1.2">
+          <rect class="anim" style="--d:250" x="30" y="110" width="190" height="44" rx="22"/>
+          <rect class="anim" style="--d:330" x="30" y="170" width="190" height="44" rx="22"/>
+          <rect class="anim" style="--d:410" x="30" y="230" width="190" height="44" rx="22"/>
+          <rect class="anim" style="--d:490" x="30" y="290" width="190" height="44" rx="22"/>
+          <rect class="anim" style="--d:570" x="30" y="350" width="190" height="44" rx="22"/>
+        </g>
+        <g class="t2" style="font-size:15px">
+          <text class="anim" style="--d:250" x="50" y="137">Asientos contables</text>
+          <text class="anim" style="--d:330" x="50" y="197">Ventas y compras</text>
+          <text class="anim" style="--d:410" x="50" y="257">Cobros y retenciones</text>
+          <text class="anim" style="--d:490" x="50" y="317">Bancos</text>
+          <text class="anim" style="--d:570" x="50" y="377">Clientes y proveedores</text>
+        </g>
+        <path id="a1" class="ruta-svg draw" pathLength="1" style="--d:800" d="M220 132 C320 132 300 210 400 210"/>
+        <path id="a2" class="ruta-svg draw" pathLength="1" style="--d:880" d="M220 192 C310 192 310 215 400 215"/>
+        <path id="a3" class="ruta-svg draw" pathLength="1" style="--d:960" d="M220 252 C310 252 310 222 400 222"/>
+        <path id="a4" class="ruta-svg draw" pathLength="1" style="--d:1040" d="M220 312 C320 312 300 228 400 228"/>
+        <path id="a5" class="ruta-svg draw" pathLength="1" style="--d:1120" d="M220 372 C330 372 290 234 400 234"/>
+        <g class="anim oscuro-txt" style="--d:1300">
+          <rect class="caja-luz" x="400" y="150" width="190" height="140" rx="20"/>
+          <text class="t1" x="422" y="196">Power BI</text>
+          <text class="t3" x="422" y="222">modelo y tableros</text>
+          <rect x="424" y="244" width="12" height="28" rx="2" fill="#00635b"/><rect x="442" y="236" width="12" height="36" rx="2" fill="#00635b"/><rect x="460" y="252" width="12" height="20" rx="2" fill="#00635b"/><rect x="478" y="230" width="12" height="42" rx="2" fill="#00635b"/>
+        </g>
+        <g class="tarde" style="--d:1700">
+          <circle class="pt" r="4.5"><animateMotion dur="2s" repeatCount="indefinite"><mpath href="#a1" xlink:href="#a1"/></animateMotion></circle>
+          <circle class="pt" r="4.5"><animateMotion dur="2.2s" begin=".5s" repeatCount="indefinite"><mpath href="#a2" xlink:href="#a2"/></animateMotion></circle>
+          <circle class="pt" r="4.5"><animateMotion dur="1.9s" begin=".9s" repeatCount="indefinite"><mpath href="#a3" xlink:href="#a3"/></animateMotion></circle>
+          <circle class="pt" r="4.5"><animateMotion dur="2.3s" begin=".3s" repeatCount="indefinite"><mpath href="#a4" xlink:href="#a4"/></animateMotion></circle>
+          <circle class="pt" r="4.5"><animateMotion dur="2.1s" begin="1.2s" repeatCount="indefinite"><mpath href="#a5" xlink:href="#a5"/></animateMotion></circle>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Reto 2 -->
+<section class="slide oscuro" data-tema="oscuro" aria-roledescription="diapositiva" aria-label="Reto 2: del Excel disperso a un sistema en la nube">
+  <header class="cabecera"><img src="assets/logo-datastudio-blanco.svg" alt="dataStudio"><span>Reto 2 de 3</span></header>
+  <div class="cuerpo dos">
+    <div class="texto">
+      <span class="paso">Reto 2 de 3</span>
+      <h2>Del Excel disperso a un sistema en la nube</h2>
+      <p class="lead">Hoy la información complementaria vive en archivos sueltos y carpetas distintas. Construimos un sistema modular donde cada cliente entra con su usuario y carga sus datos con un mismo estándar.</p>
+      <ul class="lista">
+        <li><b>Un estándar de datos</b> igual para cualquier cliente.</li>
+        <li><b>Un solo lugar</b> en lugar de varios repositorios.</li>
+        <li><b>Listo para Power BI</b> sin limpiar archivos a mano.</li>
+      </ul>
+    </div>
+    <div class="fusion" aria-hidden="true" data-escalonar>
+      <div class="archivo xls" style="--x:2%;--y:4%;--r:-8deg"><i>X</i>Cartera cliente A.xlsx</div>
+      <div class="archivo gs" style="--x:54%;--y:0%;--r:6deg"><i>S</i>Ventas noviembre (Sheets)</div>
+      <div class="archivo drv" style="--x:66%;--y:30%;--r:-4deg"><i>D</i>Carpeta Drive cliente B</div>
+      <div class="archivo xls" style="--x:60%;--y:78%;--r:5deg"><i>X</i>Presupuesto 2026.xlsx</div>
+      <div class="archivo gs" style="--x:4%;--y:72%;--r:7deg"><i>S</i>Control de pagos (Sheets)</div>
+      <div class="archivo xls" style="--x:0%;--y:38%;--r:-3deg"><i>X</i>Reporte final v3.xlsx</div>
+      <div class="nube">
+        <div class="nube__titulo">
+          <svg width="34" height="24" viewBox="0 0 34 24" aria-hidden="true"><path d="M9 22h17a7 7 0 0 0 .6-14A9 9 0 0 0 9.3 9.2 6.5 6.5 0 0 0 9 22z" fill="#037a70"/></svg>
+          Sistema satélite
+        </div>
+        <ul data-escalonar>
+          <li>Acceso por cliente</li>
+          <li>Formularios estándar</li>
+          <li>Validación al cargar</li>
+          <li>Historial de cambios</li>
+          <li>Conexión a Power BI</li>
+        </ul>
+        <p class="nube__salida">Datos ordenados, listos para el tablero.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Reto 3 -->
+<section class="slide oscuro" data-tema="oscuro" aria-roledescription="diapositiva" aria-label="Reto 3: Portal BI + IA">
+  <header class="cabecera"><img src="assets/logo-datastudio-blanco.svg" alt="dataStudio"><span>Reto 3 de 3</span></header>
+  <div class="cuerpo dos">
+    <div class="texto">
+      <span class="paso">Reto 3 de 3</span>
+      <h2>Portal BI + IA: cada cliente con su tablero</h2>
+      <p class="lead">Unificamos todo en tu portal. Das acceso a cada cliente, uno por uno, a sus tableros, sin comprar licencias de Power BI por persona. Y con IA para conversar con sus datos.</p>
+      <ul class="lista">
+        <li><b>Usuarios ilimitados:</b> un acceso para cada cliente.</li>
+        <li><b>Tu marca:</b> tu logo y tus colores.</li>
+        <li><b>Una sola licencia</b> de Power BI Pro.</li>
+        <li><b>Chat con IA</b> junto al tablero.</li>
+      </ul>
+    </div>
+    <div class="portal" aria-hidden="true">
+      <div class="portal__barra"><i></i><i></i><i></i><b>Portal BI de Strategic &amp; Support</b></div>
+      <div class="portal__cuerpo">
+        <aside class="portal__menu">
+          <img src="assets/logo-strategic-support.png" alt="">
+          <ul><li class="activo">Cliente 01</li><li>Cliente 02</li><li>Cliente 03</li><li>Cliente 04</li><li>Cliente 05</li></ul>
+        </aside>
+        <div class="portal__tablero">
+          <div class="kpis">
+            <div class="kpi"><span>Ventas</span><b style="--v:78%"></b></div>
+            <div class="kpi"><span>Utilidad</span><b style="--v:56%"></b></div>
+            <div class="kpi"><span>Cartera</span><b style="--v:28%"></b></div>
+          </div>
+          <div class="barras" data-escalonar>
+            <i style="--h:38%"></i><i style="--h:46%"></i><i style="--h:42%"></i><i style="--h:55%"></i><i style="--h:51%"></i><i style="--h:63%"></i><i style="--h:58%"></i><i style="--h:70%"></i><i style="--h:66%"></i><i style="--h:79%"></i><i style="--h:74%"></i><i style="--h:88%"></i>
+          </div>
+        </div>
+        <div class="portal__chat">
+          <div class="chat__titulo"><i></i>Asistente IA</div>
+          <div class="burbuja usuario">¿Cómo van las ventas frente al mes pasado?</div>
+          <div class="burbuja ia">
+            <span class="escribiendo"><i></i><i></i><i></i></span>
+            <span class="respuesta">Las ventas del mes superan a las del mes anterior. El mayor aporte viene de los servicios contables.</span>
+            <span class="fuente" style="display:block">Fuente: tablero de ventas</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. Hoja de ruta -->
+<section class="slide oscuro" data-tema="oscuro" aria-roledescription="diapositiva" aria-label="Hoja de ruta en seis etapas">
+  <header class="cabecera"><img src="assets/logo-datastudio-blanco.svg" alt="dataStudio"><span>Hoja de ruta</span></header>
+  <div class="cuerpo">
+    <h2>El camino, en seis etapas</h2>
+    <ol class="ruta" data-escalonar>
+      <li><span class="ruta__n">1</span><h3>Conexión a la API</h3><p>Estudiar, entender y parametrizar la API del sistema contable.</p></li>
+      <li><span class="ruta__n">2</span><h3>KPIs y tablero v1</h3><p>Definir los indicadores contigo y construir la primera versión con datos de la API.</p></li>
+      <li><span class="ruta__n">3</span><h3>Sistemas satélite</h3><p>Sistema modular en la nube para los datos que hoy están en Excel y Sheets.</p><span class="etq">alcance por definir</span></li>
+      <li><span class="ruta__n">4</span><h3>Tablero unificado</h3><p>Integrar ambas fuentes en un solo tablero.</p></li>
+      <li><span class="ruta__n">5</span><h3>Documentación</h3><p>Documentación técnica, manual de uso y diccionario de datos.</p></li>
+      <li class="dest"><span class="ruta__n">6</span><h3>Portal BI + IA</h3><p>Acceso para cada cliente y chat con IA.</p><span class="etq">servicio mensual</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 8. Etapa 1 -->
+<section class="slide claro" data-tema="claro" aria-roledescription="diapositiva" aria-label="Etapa 1: conexión a la API">
+  <header class="cabecera"><img src="assets/logo-datastudio-abismo.svg" alt="dataStudio"><span>Inversión</span></header>
+  <div class="cuerpo dos">
+    <div class="texto">
+      <span class="paso">Etapa 1 de 6</span>
+      <h2>Conexión a la API del sistema contable</h2>
+      <p class="lead">Estudiamos la API, entendemos sus datos y la dejamos parametrizada en Power BI, lista para alimentar los tableros.</p>
+      <p class="entregable"><b>Entregable:</b> conexión funcionando, con actualización automática y cifras conciliadas con el sistema.</p>
+    </div>
+    <div>
+      <table class="tabla">
+        <thead><tr><th scope="col">Actividad</th><th scope="col" class="num">Horas</th><th scope="col" class="num">Importe</th></tr></thead>
+        <tbody>
+          <tr><td>Revisión de la documentación y pruebas de conexión</td><td class="num">6</td><td class="num">USD 90</td></tr>
+          <tr><td>Mapeo de los datos disponibles: contabilidad, ventas, compras, cobros, bancos y clientes</td><td class="num">8</td><td class="num">USD 120</td></tr>
+          <tr><td>Parametrización de la conexión en Power BI: paginación, filtros de fecha y varias empresas</td><td class="num">12</td><td class="num">USD 180</td></tr>
+          <tr><td>Configuración de la actualización automática e incremental</td><td class="num">6</td><td class="num">USD 90</td></tr>
+          <tr><td>Pruebas de volumen y conciliación de cifras con el sistema</td><td class="num">8</td><td class="num">USD 120</td></tr>
+        </tbody>
+        <tfoot><tr><th scope="row">Total etapa 1</th><td class="num">40 h</td><td class="num">USD <span data-cuenta="600">600</span></td></tr></tfoot>
+      </table>
+      <p class="nota">Tarifa: USD 15 por hora.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 9. Etapa 2 -->
+<section class="slide claro" data-tema="claro" aria-roledescription="diapositiva" aria-label="Etapa 2: KPIs y tablero versión 1">
+  <header class="cabecera"><img src="assets/logo-datastudio-abismo.svg" alt="dataStudio"><span>Inversión</span></header>
+  <div class="cuerpo dos">
+    <div class="texto">
+      <span class="paso">Etapa 2 de 6</span>
+      <h2>KPIs y tablero versión 1</h2>
+      <p class="lead">Definimos contigo los indicadores clave y construimos la primera versión del tablero con los datos de la API. Es la versión 1 porque aún faltarán los datos de los sistemas satélite.</p>
+      <p class="entregable"><b>Entregable:</b> tablero en Power BI con estados financieros, cartera y ventas.</p>
+    </div>
+    <div>
+      <table class="tabla">
+        <thead><tr><th scope="col">Actividad</th><th scope="col" class="num">Horas</th><th scope="col" class="num">Importe</th></tr></thead>
+        <tbody>
+          <tr><td>Talleres de definición de KPIs con Gustavo y documento de requerimientos</td><td class="num">6</td><td class="num">USD 90</td></tr>
+          <tr><td>Modelo de datos: asientos, plan de cuentas, documentos, clientes y calendario</td><td class="num">12</td><td class="num">USD 180</td></tr>
+          <tr><td>Medidas e indicadores: estados financieros, cartera, ventas y bancos</td><td class="num">14</td><td class="num">USD 210</td></tr>
+          <tr><td>Diseño y desarrollo de las páginas del tablero</td><td class="num">16</td><td class="num">USD 240</td></tr>
+          <tr><td>Revisión contigo y ajustes</td><td class="num">6</td><td class="num">USD 90</td></tr>
+        </tbody>
+        <tfoot><tr><th scope="row">Total etapa 2</th><td class="num">54 h</td><td class="num">USD <span data-cuenta="810">810</span></td></tr></tfoot>
+      </table>
+      <p class="nota">Tarifa: USD 15 por hora.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10. Etapa 3 -->
+<section class="slide claro" data-tema="claro" aria-roledescription="diapositiva" aria-label="Etapa 3: sistemas satélite a medida">
+  <header class="cabecera"><img src="assets/logo-datastudio-abismo.svg" alt="dataStudio"><span>Inversión</span></header>
+  <div class="cuerpo dos">
+    <div class="texto">
+      <span class="paso">Etapa 3 de 6</span>
+      <h2>Sistemas satélite a medida</h2>
+      <p class="lead">Un sistema modular en la nube donde tus clientes ingresan su información con un estándar común. Su alcance depende de los Excel y Sheets que hoy se usan, así que lo cotizamos después de revisarlos juntos.</p>
+    </div>
+    <div class="texto">
+      <h3>Lo que definiremos en la reunión de levantamiento</h3>
+      <ul class="lista">
+        <li>Qué archivos existen y qué datos contienen.</li>
+        <li>Qué módulos necesita el sistema y quién carga cada dato.</li>
+        <li>Las reglas de validación y el formato estándar.</li>
+        <li>Cómo se integra con el tablero de Power BI.</li>
+      </ul>
+      <div class="definir">
+        <span class="cifra">Por definir</span>
+        <p class="nota" style="margin:0">Se cotiza a USD 15 por hora después de la reunión de levantamiento.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 11. Etapas 4 y 5 -->
+<section class="slide claro" data-tema="claro" aria-roledescription="diapositiva" aria-label="Etapas 4 y 5: tablero unificado y documentación">
+  <header class="cabecera"><img src="assets/logo-datastudio-abismo.svg" alt="dataStudio"><span>Inversión</span></header>
+  <div class="cuerpo par">
+    <div>
+      <span class="paso">Etapa 4 de 6</span>
+      <h3>Tablero unificado</h3>
+      <p class="lead">Integramos los datos de la API y del sistema satélite en un solo tablero.</p>
+      <table class="tabla">
+        <thead><tr><th scope="col">Actividad</th><th scope="col" class="num">Horas</th><th scope="col" class="num">Importe</th></tr></thead>
+        <tbody>
+          <tr><td>Integración de las fuentes satélite al modelo</td><td class="num">10</td><td class="num">USD 150</td></tr>
+          <tr><td>Nuevos indicadores con ambas fuentes</td><td class="num">10</td><td class="num">USD 150</td></tr>
+          <tr><td>Ampliación y ajuste de las páginas</td><td class="num">10</td><td class="num">USD 150</td></tr>
+          <tr><td>Acceso por cliente (cada uno ve solo lo suyo) y pruebas</td><td class="num">6</td><td class="num">USD 90</td></tr>
+        </tbody>
+        <tfoot><tr><th scope="row">Total etapa 4</th><td class="num">36 h</td><td class="num">USD <span data-cuenta="540">540</span></td></tr></tfoot>
+      </table>
+      <p class="nota">Referencial: se confirma junto con la etapa 3.</p>
+    </div>
+    <div>
+      <span class="paso">Etapa 5 de 6</span>
+      <h3>Documentación</h3>
+      <p class="lead">Para que el tablero se entienda, se use bien y se pueda mantener.</p>
+      <table class="tabla">
+        <thead><tr><th scope="col">Actividad</th><th scope="col" class="num">Horas</th><th scope="col" class="num">Importe</th></tr></thead>
+        <tbody>
+          <tr><td>Documentación técnica del desarrollo</td><td class="num">6</td><td class="num">USD 90</td></tr>
+          <tr><td>Diccionario de datos y catálogo de KPIs</td><td class="num">6</td><td class="num">USD 90</td></tr>
+          <tr><td>Manual de uso del tablero</td><td class="num">4</td><td class="num">USD 60</td></tr>
+          <tr><td>Sesión de capacitación</td><td class="num">2</td><td class="num">USD 30</td></tr>
+        </tbody>
+        <tfoot><tr><th scope="row">Total etapa 5</th><td class="num">18 h</td><td class="num">USD <span data-cuenta="270">270</span></td></tr></tfoot>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 12. Etapa 6 -->
+<section class="slide oscuro" data-tema="oscuro" aria-roledescription="diapositiva" aria-label="Etapa 6: Portal BI + IA">
+  <header class="cabecera"><img src="assets/logo-datastudio-blanco.svg" alt="dataStudio"><span>Inversión</span></header>
+  <div class="cuerpo dos">
+    <div class="texto">
+      <span class="paso">Etapa 6 de 6</span>
+      <h2>Portal BI + IA</h2>
+      <div class="precio"><span class="cifra">USD <span data-cuenta="60">60</span></span><span class="por">al mes</span></div>
+      <p class="lead">Usuarios ilimitados: crea un acceso para cada uno de tus clientes. Tu analítica en Power BI crece y escala sin pagar licencias por persona ni por cliente.</p>
+    </div>
+    <div class="texto">
+      <ul class="incluye">
+        <li><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="13" fill="#4dcfc1"/><path d="M7.5 13.5l3.6 3.6 7.4-7.6" fill="none" stroke="#001720" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Nosotros lo instalamos, lo publicamos y lo mantenemos funcionando. El servidor corre por nuestra cuenta.</span></li>
+        <li><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="13" fill="#4dcfc1"/><path d="M7.5 13.5l3.6 3.6 7.4-7.6" fill="none" stroke="#001720" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Te entregamos TU portal, con tu logo y tus colores, y te enseñamos a usarlo.</span></li>
+        <li><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="13" fill="#4dcfc1"/><path d="M7.5 13.5l3.6 3.6 7.4-7.6" fill="none" stroke="#001720" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Tú solo pones tu licencia de Power BI Pro. Tus datos se quedan en tu Power BI.</span></li>
+        <li><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="13" fill="#4dcfc1"/><path d="M7.5 13.5l3.6 3.6 7.4-7.6" fill="none" stroke="#001720" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>IA opcional: la conectamos con el proveedor que elijas, y su consumo lo pagas directo.</span></li>
+      </ul>
+      <p class="aclaracion">El portal es un servicio de dataStudio: lo configuramos con tu licencia de Power BI en un entorno privado para Strategic &amp; Support. Conoce más en <a href="https://datastudio.es/portal-bi" target="_blank" rel="noopener">datastudio.es/portal-bi</a>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 13. Resumen -->
+<section class="slide claro" data-tema="claro" aria-roledescription="diapositiva" aria-label="Resumen de inversión">
+  <header class="cabecera"><img src="assets/logo-datastudio-abismo.svg" alt="dataStudio"><span>Inversión</span></header>
+  <div class="cuerpo dos">
+    <div class="texto">
+      <h2>Resumen de inversión</h2>
+      <div class="total">
+        <span class="cifra">USD <span data-cuenta="2220">2220</span></span>
+        <small>Desarrollo de las etapas 1, 2, 4 y 5 (148 horas a USD 15). La etapa 3 se suma tras la reunión de levantamiento.</small>
+      </div>
+      <div class="mensual"><span class="cifra">USD 60</span><span>al mes por el Portal BI + IA, con usuarios ilimitados.</span></div>
+    </div>
+    <div>
+      <table class="tabla">
+        <thead><tr><th scope="col">Etapa</th><th scope="col" class="num">Horas</th><th scope="col" class="num">Importe</th></tr></thead>
+        <tbody>
+          <tr><td>1. Conexión a la API</td><td class="num">40</td><td class="num">USD 600</td></tr>
+          <tr><td>2. KPIs y tablero v1</td><td class="num">54</td><td class="num">USD 810</td></tr>
+          <tr><td>3. Sistemas satélite</td><td class="num tbd">por definir</td><td class="num tbd">por definir</td></tr>
+          <tr><td>4. Tablero unificado (referencial)</td><td class="num">36</td><td class="num">USD 540</td></tr>
+          <tr><td>5. Documentación</td><td class="num">18</td><td class="num">USD 270</td></tr>
+          <tr><td>6. Portal BI + IA</td><td class="num">—</td><td class="num">USD 60 al mes</td></tr>
+        </tbody>
+        <tfoot><tr><th scope="row">Total desarrollo (sin etapa 3)</th><td class="num">148 h</td><td class="num">USD 2220</td></tr></tfoot>
+      </table>
+      <p class="excluye">No incluye la licencia de Power BI Pro, el costo que el proveedor del sistema contable cobre por habilitar la API (si aplica) ni el consumo del proveedor de IA.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 14. Próximos pasos -->
+<section class="slide oscuro" data-tema="oscuro" aria-roledescription="diapositiva" aria-label="Próximos pasos y contacto">
+  <header class="cabecera"><img src="assets/logo-datastudio-blanco.svg" alt="dataStudio"><span>Próximos pasos</span></header>
+  <div class="cuerpo dos">
+    <div class="texto">
+      <h2>Próximos pasos</h2>
+      <ol class="pasos">
+        <li>Aprobar esta propuesta.</li>
+        <li>Enviar al proveedor la solicitud de acceso a la API (ya está lista).</li>
+        <li>Agendar la reunión de levantamiento de los Excel y Sheets.</li>
+        <li>Iniciar la etapa 1.</li>
+      </ol>
+    </div>
+    <div class="contacto">
+      <img src="assets/logo-datastudio-blanco.svg" alt="dataStudio">
+      <p>Sergio Achivare</p>
+      <a href="https://wa.me/59176008398" target="_blank" rel="noopener">WhatsApp +591 7600 8398</a>
+      <a href="mailto:datastudio.scz@gmail.com">datastudio.scz@gmail.com</a>
+      <a href="https://datastudio.es" target="_blank" rel="noopener">datastudio.es</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<nav class="nav" aria-label="Navegación de la presentación">
+  <span class="indice" id="indice"></span>
+  <span class="contador" id="contador">1 / 14</span>
+  <button id="prev" type="button" aria-label="Diapositiva anterior"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button id="next" type="button" aria-label="Diapositiva siguiente"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</nav>
+<div class="progreso" id="progreso" aria-hidden="true"></div>
+
+<script>
+(function () {
+  var NS = 'http://www.w3.org/2000/svg';
+
+  function oscurecer(hex, f) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgb(' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(function (c) { return Math.round(c * f); }).join(',') + ')';
+  }
+
+  // Portada: tablero isométrico (los cubos del logo del cliente convertidos en barras de datos)
+  function construirIso(svg) {
+    if (!svg) return;
+    var W = 100, D = W * Math.tan(Math.PI / 6), U = 30, ox = 320, oy = 222;
+    var H = [[2, 3, 4, 5], [2, 3, 5, 4], [1, 2, 3, 4], [1, 1, 2, 3]];
+    var tonos = { 1: '#1b4f5b', 2: '#0b6168', 3: '#037a70', 4: '#24a596', 5: '#4dcfc1' };
+    var celdas = [];
+    for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) celdas.push({ i: i, j: j, h: H[i][j] });
+    celdas.sort(function (a, b) { return (a.i + a.j) - (b.i + b.j) || a.i - b.i; });
+    var p = function (x, y) { return x.toFixed(1) + ',' + y.toFixed(1); };
+    var cima = {};
+    celdas.forEach(function (c) {
+      var cx = ox + (c.i - c.j) * W / 2, cy = oy + (c.i + c.j) * D / 2, h = c.h * U, t = tonos[c.h];
+      var g = document.createElementNS(NS, 'g');
+      g.setAttribute('class', 'cubo');
+      g.style.setProperty('--d', (c.i + c.j) * 110 + c.i * 30);
+      [[[p(cx - W / 2, cy - h + D / 2), p(cx, cy - h + D), p(cx, cy + D), p(cx - W / 2, cy + D / 2)], oscurecer(t, 0.62)],
+       [[p(cx + W / 2, cy - h + D / 2), p(cx, cy - h + D), p(cx, cy + D), p(cx + W / 2, cy + D / 2)], oscurecer(t, 0.44)],
+       [[p(cx, cy - h), p(cx + W / 2, cy - h + D / 2), p(cx, cy - h + D), p(cx - W / 2, cy - h + D / 2)], t]
+      ].forEach(function (cara) {
+        var poly = document.createElementNS(NS, 'polygon');
+        poly.setAttribute('points', cara[0].join(' '));
+        poly.setAttribute('fill', cara[1]);
+        poly.setAttribute('stroke', 'rgba(0,23,32,.35)');
+        poly.setAttribute('stroke-width', '1');
+        g.appendChild(poly);
+      });
+      cima[c.i + '-' + c.j] = [cx, cy - h + D / 2];
+      svg.appendChild(g);
+    });
+    // Línea de tendencia que conecta la columna derecha (de adelante hacia atrás)
+    var pts = ['3-3', '2-3', '1-3', '0-3'].map(function (k) { return cima[k]; });
+    var linea = document.createElementNS(NS, 'path');
+    linea.setAttribute('d', 'M' + pts.map(function (q) { return q[0].toFixed(1) + ' ' + q[1].toFixed(1); }).join(' L'));
+    linea.setAttribute('class', 'draw');
+    linea.setAttribute('pathLength', '1');
+    linea.setAttribute('fill', 'none');
+    linea.setAttribute('stroke', '#f4f7ef');
+    linea.setAttribute('stroke-width', '3');
+    linea.setAttribute('stroke-linecap', 'round');
+    linea.style.setProperty('--d', 1700);
+    svg.appendChild(linea);
+    pts.forEach(function (q, k) {
+      var c = document.createElementNS(NS, 'circle');
+      c.setAttribute('cx', q[0]); c.setAttribute('cy', q[1]); c.setAttribute('r', 6);
+      c.setAttribute('class', 'iso-punto tarde');
+      c.style.setProperty('--d', 1800 + k * 180);
+      svg.appendChild(c);
+    });
+  }
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var contador = document.getElementById('contador');
+  var indice = document.getElementById('indice');
+  var vivo = document.getElementById('vivo');
+  var progreso = document.getElementById('progreso');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var reducir = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var actual = -1, bloqueado = 0;
+
+  document.querySelectorAll('[data-escalonar]').forEach(function (c) {
+    Array.prototype.forEach.call(c.children, function (h, i) { h.style.setProperty('--i', i); });
+  });
+  construirIso(document.getElementById('iso'));
+
+  function prepararFusion(f) {
+    var cx = f.clientWidth / 2, cy = f.clientHeight / 2;
+    f.querySelectorAll('.archivo').forEach(function (a) {
+      a.style.setProperty('--tx', (cx - (a.offsetLeft + a.offsetWidth / 2)) + 'px');
+      a.style.setProperty('--ty', (cy - (a.offsetTop + a.offsetHeight / 2)) + 'px');
+    });
+  }
+
+  function contar(el) {
+    var fin = +el.getAttribute('data-cuenta');
+    if (reducir) { el.textContent = fin; return; }
+    var t0 = Date.now() + 250, dur = 1100;
+    el.textContent = '0';
+    var paso = function () {
+      var q = Math.max(0, Math.min(1, (Date.now() - t0) / dur));
+      el.textContent = Math.round(fin * (1 - Math.pow(1 - q, 3)));
+      if (q < 1) setTimeout(paso, 30);
+    };
+    setTimeout(paso, 250);
+  }
+
+  function ir(n) {
+    n = Math.max(0, Math.min(total - 1, n));
+    if (n === actual) return;
+    slides.forEach(function (s, i) {
+      s.classList.toggle('is-past', i < n);
+      if (i !== n) { s.classList.remove('is-active'); s.setAttribute('aria-hidden', 'true'); s.inert = true; }
+    });
+    var s = slides[n];
+    var f = s.querySelector('.fusion');
+    if (f) prepararFusion(f);
+    s.classList.remove('is-active');
+    void s.offsetWidth;
+    s.classList.add('is-active');
+    s.removeAttribute('aria-hidden');
+    s.inert = false;
+    s.scrollTop = 0;
+    document.body.setAttribute('data-tema', s.getAttribute('data-tema') || 'oscuro');
+    actual = n;
+    var titulo = s.getAttribute('aria-label');
+    contador.textContent = (n + 1) + ' / ' + total;
+    indice.textContent = n === 0 ? 'Avanza con las flechas, los botones o deslizando la pantalla' : titulo;
+    vivo.textContent = 'Diapositiva ' + (n + 1) + ' de ' + total + ': ' + titulo;
+    progreso.style.transform = 'scaleX(' + ((n + 1) / total) + ')';
+    prev.disabled = n === 0;
+    next.disabled = n === total - 1;
+    if (location.hash !== '#' + (n + 1)) history.replaceState(null, '', '#' + (n + 1));
+    s.querySelectorAll('[data-cuenta]').forEach(contar);
+  }
+
+  function alFinal(s) { return s.scrollTop + s.clientHeight >= s.scrollHeight - 4; }
+  function alInicio(s) { return s.scrollTop <= 4; }
+
+  prev.addEventListener('click', function () { ir(actual - 1); });
+  next.addEventListener('click', function () { ir(actual + 1); });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    var s = slides[actual];
+    switch (e.key) {
+      case 'ArrowRight': case 'PageDown': ir(actual + 1); e.preventDefault(); break;
+      case 'ArrowLeft': case 'PageUp': ir(actual - 1); e.preventDefault(); break;
+      case 'ArrowDown': if (alFinal(s)) { ir(actual + 1); e.preventDefault(); } break;
+      case 'ArrowUp': if (alInicio(s)) { ir(actual - 1); e.preventDefault(); } break;
+      case ' ': if (e.target.closest && e.target.closest('button, a')) return; if (alFinal(s)) { ir(actual + 1); e.preventDefault(); } break;
+      case 'Home': ir(0); e.preventDefault(); break;
+      case 'End': ir(total - 1); e.preventDefault(); break;
+    }
+  });
+
+  window.addEventListener('wheel', function (e) {
+    var s = slides[actual], ahora = Date.now();
+    if (Math.abs(e.deltaY) < 25 || ahora < bloqueado) return;
+    if (e.deltaY > 0 && alFinal(s)) { bloqueado = ahora + 900; ir(actual + 1); }
+    else if (e.deltaY < 0 && alInicio(s)) { bloqueado = ahora + 900; ir(actual - 1); }
+  }, { passive: true });
+
+  var tx = 0, ty = 0;
+  window.addEventListener('touchstart', function (e) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
+  window.addEventListener('touchend', function (e) {
+    var dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) ir(actual + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  window.addEventListener('hashchange', function () {
+    var n = parseInt(location.hash.slice(1), 10) - 1;
+    if (!isNaN(n)) ir(n);
+  });
+
+  var inicial = parseInt(location.hash.slice(1), 10) - 1;
+  ir(isNaN(inicial) ? 0 : inicial);
+})();
+</script>
+</body>
+</html>
