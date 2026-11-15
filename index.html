@@ -195,7 +195,7 @@ ul,ol{margin:0;padding:0}
 @media (max-width:520px){.portal__cuerpo{grid-template-columns:1fr}.portal__menu ul{grid-auto-flow:column;overflow-x:auto}.portal__menu img{width:120px}}
 
 /* ---------- Hoja de ruta ---------- */
-.ruta{list-style:none;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:18px;position:relative;padding-top:6px}
+.ruta{list-style:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;position:relative;padding-top:6px}
 .ruta::before{content:"";position:absolute;left:22px;right:22px;top:28px;height:2px;background:var(--verde-claro);opacity:.5;transform:scaleX(0);transform-origin:left}
 .is-active .ruta::before{animation:llenar 1.6s var(--curva) forwards}
 .ruta li{position:relative;display:flex;flex-direction:column;gap:8px;opacity:0;transform:translateY(12px)}
@@ -567,17 +567,16 @@ body[data-tema="claro"] .nav{color:var(--abismo)}
 </section>
 
 <!-- 7. Hoja de ruta -->
-<section class="slide oscuro" data-tema="oscuro" aria-roledescription="diapositiva" aria-label="Hoja de ruta en seis etapas">
+<section class="slide oscuro" data-tema="oscuro" aria-roledescription="diapositiva" aria-label="Hoja de ruta en cinco etapas">
   <header class="cabecera"><img src="assets/logo-datastudio-blanco.svg" alt="dataStudio"><span>Hoja de ruta</span></header>
   <div class="cuerpo">
-    <h2>El camino, en seis etapas</h2>
+    <h2>El camino, en cinco etapas</h2>
     <ol class="ruta" data-escalonar>
       <li><span class="ruta__n">1</span><h3>Conexión a la API</h3><p>Estudiar, entender y parametrizar la API del sistema contable.</p></li>
-      <li><span class="ruta__n">2</span><h3>KPIs y tablero v1</h3><p>Definir los indicadores contigo y construir la primera versión con datos de la API.</p></li>
-      <li><span class="ruta__n">3</span><h3>Sistemas satélite</h3><p>Sistema modular en la nube para los datos que hoy están en Excel y Sheets.</p><span class="etq">alcance por definir</span></li>
-      <li><span class="ruta__n">4</span><h3>Tablero unificado</h3><p>Integrar ambas fuentes en un solo tablero.</p></li>
-      <li><span class="ruta__n">5</span><h3>Documentación</h3><p>Documentación técnica, manual de uso y diccionario de datos.</p></li>
-      <li class="dest"><span class="ruta__n">6</span><h3>Portal BI + IA</h3><p>Acceso para cada cliente y chat con IA.</p><span class="etq">servicio mensual</span></li>
+      <li><span class="ruta__n">2</span><h3>Sistemas satélite</h3><p>Sistema modular en la nube para los datos que hoy están en Excel y Sheets.</p><span class="etq">alcance por definir</span></li>
+      <li><span class="ruta__n">3</span><h3>Tablero unificado</h3><p>Definir los KPIs contigo y construir un solo tablero con la API y el sistema satélite.</p></li>
+      <li><span class="ruta__n">4</span><h3>Documentación</h3><p>Documentación técnica, manual de uso y diccionario de datos.</p></li>
+      <li class="dest"><span class="ruta__n">5</span><h3>Portal BI + IA</h3><p>Acceso para cada cliente y chat con IA.</p><span class="etq">servicio mensual</span></li>
     </ol>
   </div>
 </section>
@@ -587,7 +586,7 @@ body[data-tema="claro"] .nav{color:var(--abismo)}
   <header class="cabecera"><img src="assets/logo-datastudio-abismo.svg" alt="dataStudio"><span>Inversión</span></header>
   <div class="cuerpo dos">
     <div class="texto">
-      <span class="paso">Etapa 1 de 6</span>
+      <span class="paso">Etapa 1 de 5</span>
       <h2>Conexión a la API del sistema contable</h2>
       <p class="lead">Estudiamos la API, entendemos sus datos y la dejamos parametrizada en Power BI, lista para alimentar los tableros.</p>
       <p class="entregable"><b>Entregable:</b> conexión funcionando en Power BI y un mapa claro de los datos que entrega la API.</p>
@@ -607,39 +606,12 @@ body[data-tema="claro"] .nav{color:var(--abismo)}
   </div>
 </section>
 
-<!-- 9. Etapa 2 -->
-<section class="slide claro" data-tema="claro" aria-roledescription="diapositiva" aria-label="Etapa 2: KPIs y tablero versión 1">
-  <header class="cabecera"><img src="assets/logo-datastudio-abismo.svg" alt="dataStudio"><span>Inversión</span></header>
-  <div class="cuerpo dos">
-    <div class="texto">
-      <span class="paso">Etapa 2 de 6</span>
-      <h2>KPIs y tablero versión 1</h2>
-      <p class="lead">Definimos contigo los indicadores clave y construimos la primera versión del tablero con los datos de la API. Es la versión 1 porque aún faltarán los datos de los sistemas satélite.</p>
-      <p class="entregable"><b>Entregable:</b> tablero en Power BI con estados financieros, cartera y ventas.</p>
-    </div>
-    <div>
-      <table class="tabla">
-        <thead><tr><th scope="col">Actividad</th><th scope="col" class="num">Horas</th><th scope="col" class="num">Importe</th></tr></thead>
-        <tbody>
-          <tr><td>Talleres de definición de KPIs con Gustavo y documento de requerimientos</td><td class="num">6</td><td class="num">USD 90</td></tr>
-          <tr><td>Modelo de datos: asientos, plan de cuentas, documentos, clientes y calendario</td><td class="num">12</td><td class="num">USD 180</td></tr>
-          <tr><td>Medidas e indicadores: estados financieros, cartera, ventas y bancos</td><td class="num">14</td><td class="num">USD 210</td></tr>
-          <tr><td>Diseño y desarrollo de las páginas del tablero</td><td class="num">16</td><td class="num">USD 240</td></tr>
-          <tr><td>Validación de cifras contigo, publicación con actualización programada y ajustes</td><td class="num">6</td><td class="num">USD 90</td></tr>
-        </tbody>
-        <tfoot><tr><th scope="row">Total etapa 2</th><td class="num">54 h</td><td class="num">USD <span data-cuenta="810">810</span></td></tr></tfoot>
-      </table>
-      <p class="nota">Tarifa: USD 15 por hora.</p>
-    </div>
-  </div>
-</section>
-
 <!-- 10. Etapa 3 -->
-<section class="slide claro" data-tema="claro" aria-roledescription="diapositiva" aria-label="Etapa 3: sistemas satélite a medida">
+<section class="slide claro" data-tema="claro" aria-roledescription="diapositiva" aria-label="Etapa 2: sistemas satélite a medida">
   <header class="cabecera"><img src="assets/logo-datastudio-abismo.svg" alt="dataStudio"><span>Inversión</span></header>
   <div class="cuerpo dos">
     <div class="texto">
-      <span class="paso">Etapa 3 de 6</span>
+      <span class="paso">Etapa 2 de 5</span>
       <h2>Sistemas satélite a medida</h2>
       <p class="lead">Un sistema modular en la nube donde tus clientes ingresan su información con un estándar común. Su alcance depende de los Excel y Sheets que hoy se usan, así que lo cotizamos después de revisarlos juntos.</p>
     </div>
@@ -659,30 +631,45 @@ body[data-tema="claro"] .nav{color:var(--abismo)}
   </div>
 </section>
 
-<!-- 11. Etapas 4 y 5 -->
-<section class="slide claro" data-tema="claro" aria-roledescription="diapositiva" aria-label="Etapas 4 y 5: tablero unificado y documentación">
+<!-- 10. Etapa 3: tablero unificado -->
+<section class="slide claro" data-tema="claro" aria-roledescription="diapositiva" aria-label="Etapa 3: tablero unificado">
   <header class="cabecera"><img src="assets/logo-datastudio-abismo.svg" alt="dataStudio"><span>Inversión</span></header>
-  <div class="cuerpo par">
+  <div class="cuerpo dos">
+    <div class="texto">
+      <span class="paso">Etapa 3 de 5</span>
+      <h2>Tablero unificado con los KPIs</h2>
+      <p class="lead">Definimos contigo los indicadores clave y construimos un solo tablero con los datos de la API y del sistema satélite, completo desde la primera entrega.</p>
+      <p class="entregable"><b>Entregable:</b> tablero en Power BI publicado, con estados financieros, cartera, ventas, bancos y datos satélite, y acceso por cliente.</p>
+    </div>
     <div>
-      <span class="paso">Etapa 4 de 6</span>
-      <h3>Tablero unificado</h3>
-      <p class="lead">Integramos los datos de la API y del sistema satélite en un solo tablero.</p>
       <table class="tabla">
         <thead><tr><th scope="col">Actividad</th><th scope="col" class="num">Horas</th><th scope="col" class="num">Importe</th></tr></thead>
         <tbody>
-          <tr><td>Integración de las fuentes satélite al modelo</td><td class="num">10</td><td class="num">USD 150</td></tr>
-          <tr><td>Nuevos indicadores con ambas fuentes</td><td class="num">10</td><td class="num">USD 150</td></tr>
-          <tr><td>Ampliación y ajuste de las páginas</td><td class="num">10</td><td class="num">USD 150</td></tr>
+          <tr><td>Talleres de definición de KPIs con Gustavo y documento de requerimientos</td><td class="num">6</td><td class="num">USD 90</td></tr>
+          <tr><td>Modelo de datos con ambas fuentes: contabilidad, documentos, clientes y datos satélite</td><td class="num">14</td><td class="num">USD 210</td></tr>
+          <tr><td>Medidas e indicadores: estados financieros, cartera, ventas, bancos y datos satélite</td><td class="num">16</td><td class="num">USD 240</td></tr>
+          <tr><td>Diseño y desarrollo de las páginas del tablero</td><td class="num">16</td><td class="num">USD 240</td></tr>
           <tr><td>Acceso por cliente (cada uno ve solo lo suyo) y pruebas</td><td class="num">6</td><td class="num">USD 90</td></tr>
+          <tr><td>Validación de cifras contigo, publicación con actualización programada y ajustes</td><td class="num">6</td><td class="num">USD 90</td></tr>
         </tbody>
-        <tfoot><tr><th scope="row">Total etapa 4</th><td class="num">36 h</td><td class="num">USD <span data-cuenta="540">540</span></td></tr></tfoot>
+        <tfoot><tr><th scope="row">Total etapa 3</th><td class="num">64 h</td><td class="num">USD <span data-cuenta="960">960</span></td></tr></tfoot>
       </table>
-      <p class="nota">Referencial: se confirma junto con la etapa 3.</p>
+      <p class="nota">Referencial: los indicadores de los datos satélite se confirman tras la reunión de levantamiento. Tarifa: USD 15 por hora.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11. Etapa 4: documentación -->
+<section class="slide claro" data-tema="claro" aria-roledescription="diapositiva" aria-label="Etapa 4: documentación">
+  <header class="cabecera"><img src="assets/logo-datastudio-abismo.svg" alt="dataStudio"><span>Inversión</span></header>
+  <div class="cuerpo dos">
+    <div class="texto">
+      <span class="paso">Etapa 4 de 5</span>
+      <h2>Documentación</h2>
+      <p class="lead">Para que el tablero se entienda, se use bien y se pueda mantener.</p>
+      <p class="entregable"><b>Entregable:</b> documentación técnica, diccionario de datos, manual de uso y una sesión de capacitación.</p>
     </div>
     <div>
-      <span class="paso">Etapa 5 de 6</span>
-      <h3>Documentación</h3>
-      <p class="lead">Para que el tablero se entienda, se use bien y se pueda mantener.</p>
       <table class="tabla">
         <thead><tr><th scope="col">Actividad</th><th scope="col" class="num">Horas</th><th scope="col" class="num">Importe</th></tr></thead>
         <tbody>
@@ -691,18 +678,19 @@ body[data-tema="claro"] .nav{color:var(--abismo)}
           <tr><td>Manual de uso del tablero</td><td class="num">4</td><td class="num">USD 60</td></tr>
           <tr><td>Sesión de capacitación</td><td class="num">2</td><td class="num">USD 30</td></tr>
         </tbody>
-        <tfoot><tr><th scope="row">Total etapa 5</th><td class="num">18 h</td><td class="num">USD <span data-cuenta="270">270</span></td></tr></tfoot>
+        <tfoot><tr><th scope="row">Total etapa 4</th><td class="num">18 h</td><td class="num">USD <span data-cuenta="270">270</span></td></tr></tfoot>
       </table>
+      <p class="nota">Tarifa: USD 15 por hora.</p>
     </div>
   </div>
 </section>
 
 <!-- 12. Etapa 6 -->
-<section class="slide oscuro" data-tema="oscuro" aria-roledescription="diapositiva" aria-label="Etapa 6: Portal BI + IA">
+<section class="slide oscuro" data-tema="oscuro" aria-roledescription="diapositiva" aria-label="Etapa 5: Portal BI + IA">
   <header class="cabecera"><img src="assets/logo-datastudio-blanco.svg" alt="dataStudio"><span>Inversión</span></header>
   <div class="cuerpo dos">
     <div class="texto">
-      <span class="paso">Etapa 6 de 6</span>
+      <span class="paso">Etapa 5 de 5</span>
       <h2>Portal BI + IA</h2>
       <div class="precio"><span class="cifra">USD <span data-cuenta="60">60</span></span><span class="por">al mes</span></div>
       <p class="lead">Usuarios ilimitados: crea un acceso para cada uno de tus clientes. Tu analítica en Power BI crece y escala sin pagar licencias por persona ni por cliente.</p>
@@ -726,8 +714,8 @@ body[data-tema="claro"] .nav{color:var(--abismo)}
     <div class="texto">
       <h2>Resumen de inversión</h2>
       <div class="total">
-        <span class="cifra">USD <span data-cuenta="1830">1830</span></span>
-        <small>Desarrollo de las etapas 1, 2, 4 y 5 (122 horas a USD 15). La etapa 3 se suma tras la reunión de levantamiento.</small>
+        <span class="cifra">USD <span data-cuenta="1440">1440</span></span>
+        <small>Desarrollo de las etapas 1, 3 y 4 (96 horas a USD 15). La etapa 2, sistemas satélite, se suma tras la reunión de levantamiento.</small>
       </div>
       <div class="mensual"><span class="cifra">USD 60</span><span>al mes por el Portal BI + IA, con usuarios ilimitados.</span></div>
     </div>
@@ -736,13 +724,12 @@ body[data-tema="claro"] .nav{color:var(--abismo)}
         <thead><tr><th scope="col">Etapa</th><th scope="col" class="num">Horas</th><th scope="col" class="num">Importe</th></tr></thead>
         <tbody>
           <tr><td>1. Conexión a la API</td><td class="num">14</td><td class="num">USD 210</td></tr>
-          <tr><td>2. KPIs y tablero v1</td><td class="num">54</td><td class="num">USD 810</td></tr>
-          <tr><td>3. Sistemas satélite</td><td class="num tbd">por definir</td><td class="num tbd">por definir</td></tr>
-          <tr><td>4. Tablero unificado (referencial)</td><td class="num">36</td><td class="num">USD 540</td></tr>
-          <tr><td>5. Documentación</td><td class="num">18</td><td class="num">USD 270</td></tr>
-          <tr><td>6. Portal BI + IA</td><td class="num">—</td><td class="num">USD 60 al mes</td></tr>
+          <tr><td>2. Sistemas satélite</td><td class="num tbd">por definir</td><td class="num tbd">por definir</td></tr>
+          <tr><td>3. Tablero unificado (referencial)</td><td class="num">64</td><td class="num">USD 960</td></tr>
+          <tr><td>4. Documentación</td><td class="num">18</td><td class="num">USD 270</td></tr>
+          <tr><td>5. Portal BI + IA</td><td class="num">—</td><td class="num">USD 60 al mes</td></tr>
         </tbody>
-        <tfoot><tr><th scope="row">Total desarrollo (sin etapa 3)</th><td class="num">122 h</td><td class="num">USD 1830</td></tr></tfoot>
+        <tfoot><tr><th scope="row">Total desarrollo (sin etapa 2)</th><td class="num">96 h</td><td class="num">USD 1440</td></tr></tfoot>
       </table>
       <p class="excluye">No incluye la licencia de Power BI Pro, el costo que el proveedor del sistema contable cobre por habilitar la API (si aplica) ni el consumo del proveedor de IA.</p>
     </div>
