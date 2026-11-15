@@ -245,6 +245,40 @@ ul,ol{margin:0;padding:0}
 .excluye b{color:var(--abismo);font-weight:600}
 .tabla .tbd{font-family:var(--texto);font-style:italic;color:var(--suave)}
 
+/* Forma de pago */
+.cobro{list-style:none;display:grid;gap:10px;counter-reset:c;max-width:46ch}
+.cobro li{display:grid;grid-template-columns:32px 1fr;gap:12px;align-items:center}
+.cobro li::before{counter-increment:c;content:counter(c);width:30px;height:30px;border-radius:50%;background:var(--abismo);color:var(--papel);display:grid;place-items:center;font:500 .9rem var(--datos)}
+.neto{border-left:3px solid var(--verde);background:var(--papel-2);border-radius:0 12px 12px 0;padding:14px 16px;max-width:52ch;display:grid;gap:4px}
+.neto b{font-weight:600}
+.neto p{font-size:.92rem;color:var(--tinta-suave)}
+.recibo{margin:0;justify-self:center;width:min(360px,100%);filter:drop-shadow(0 26px 34px rgba(0,23,32,.2))}
+.recibo__papel{position:relative;background:#fff;color:var(--abismo);padding:22px 26px 28px;border-radius:12px 12px 0 0;clip-path:inset(0 0 100% 0)}
+.is-active .recibo__papel{animation:imprimir 1.5s cubic-bezier(.65,0,.35,1) forwards .3s}
+@keyframes imprimir{to{clip-path:inset(0 0 -20px 0)}}
+.recibo__papel::after{content:"";position:absolute;left:0;right:0;bottom:-12px;height:12px;
+  background:linear-gradient(135deg,#fff 50%,transparent 50%) 0 0/16px 12px repeat-x,linear-gradient(-135deg,#fff 50%,transparent 50%) 0 0/16px 12px repeat-x}
+.recibo__cab{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;border-bottom:1px dashed #c9d2c6}
+.recibo__cab img{height:14px;width:auto}
+.recibo__ej{font-size:.72rem;color:var(--tinta-suave);border:1px solid #c9d2c6;border-radius:999px;padding:2px 9px}
+.recibo__tit{font-weight:600;font-size:1.15rem;margin-top:14px}
+.recibo__num{font:400 .8rem/1.5 var(--datos);color:var(--tinta-suave);margin-top:2px}
+.recibo__datos{margin:14px 0 0;display:grid;gap:10px}
+.recibo__datos dt{font-size:.72rem;color:var(--tinta-suave)}
+.recibo__datos dd{margin:1px 0 0;font-size:.9rem;line-height:1.35}
+.recibo__total{display:flex;justify-content:space-between;align-items:baseline;margin-top:16px;padding:12px 0;border-top:1px dashed #c9d2c6;border-bottom:1px dashed #c9d2c6}
+.recibo__total span{font-size:.85rem}
+.recibo__total b{font:500 1.5rem var(--datos)}
+.recibo__nota{font-size:.75rem;color:var(--tinta-suave);margin-top:10px}
+.recibo__firma{margin-top:30px;padding-top:6px;border-top:1px solid var(--abismo);width:58%;display:grid}
+.recibo__firma span{font-size:.85rem;font-weight:500}
+.recibo__firma small{font-size:.72rem;color:var(--tinta-suave)}
+.sello{position:absolute;right:20px;bottom:46px;font:600 1.25rem var(--texto);color:var(--verde);border:3px solid var(--verde);border-radius:10px;padding:3px 14px;transform:rotate(-12deg) scale(1.6);opacity:0}
+.is-active .sello{animation:sellar .45s cubic-bezier(.2,1.6,.4,1) forwards 2s}
+@keyframes sellar{to{opacity:.85;transform:rotate(-12deg) scale(1)}}
+@media (prefers-reduced-motion:reduce){.recibo__papel{clip-path:none!important}.sello{opacity:.85!important;transform:rotate(-12deg)!important}}
+@media print{.recibo__papel{clip-path:none!important}.sello{opacity:.85!important;transform:rotate(-12deg)!important}}
+
 /* Cierre */
 .pasos{list-style:none;display:grid;gap:14px;counter-reset:p}
 .pasos li{display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:center;font-size:1.05rem}
@@ -729,13 +763,49 @@ body[data-tema="claro"] .nav{color:var(--abismo)}
         </tbody>
         <tfoot><tr><th scope="row">Total desarrollo (sin etapa 2)</th><td class="num">67 h</td><td class="num">USD 1005</td></tr></tfoot>
       </table>
-      <p class="excluye">No incluye la licencia de Power BI Pro, el costo que el proveedor del sistema contable cobre por habilitar la API (si aplica) ni el consumo del proveedor de IA.</p>
-      <p class="excluye pago"><b>Forma de pago:</b> mediante enlace de pago a billetera móvil. Los montos indicados son netos: dataStudio no emite factura, por lo que los impuestos, retenciones y el sustento tributario del pago en Ecuador corren por cuenta del cliente.</p>
-    </div>
+      <p class="excluye">No incluye la licencia de Power BI Pro, el costo que el proveedor del sistema contable cobre por habilitar la API (si aplica) ni el consumo del proveedor de IA.</p>    </div>
   </div>
 </section>
 
-<!-- 14. Próximos pasos -->
+<!-- 14. Forma de pago -->
+<section class="slide claro" data-tema="claro" aria-roledescription="diapositiva" aria-label="Forma de pago">
+  <header class="cabecera"><img src="assets/logo-datastudio-abismo.svg" alt="dataStudio"><span>Forma de pago</span></header>
+  <div class="cuerpo dos">
+    <div class="texto">
+      <h2>Forma de pago</h2>
+      <p class="lead">Cada etapa se paga cuando está terminada y entregada. Por cada pago recibes un recibo.</p>
+      <ol class="cobro">
+        <li>Terminamos y te entregamos la etapa.</li>
+        <li>Te enviamos un enlace de pago a billetera móvil por el monto de esa etapa.</li>
+        <li>Pagas el monto cotizado, completo.</li>
+        <li>Te entregamos el recibo de esa etapa.</li>
+      </ol>
+      <div class="neto">
+        <b>Montos netos, sin retenciones</b>
+        <p>dataStudio no emite factura. El monto cotizado debe recibirse completo, sin descuentos ni retenciones. Los impuestos, retenciones y el sustento tributario del pago en Ecuador corren por cuenta del cliente.</p>
+      </div>
+      <p class="nota">El Portal BI + IA se paga mes a mes, con el mismo enlace y su recibo.</p>
+    </div>
+    <figure class="recibo" aria-label="Ejemplo de recibo de pago por la etapa 1">
+      <div class="recibo__papel">
+        <div class="recibo__cab"><img src="assets/logo-datastudio-abismo.svg" alt="dataStudio"><span class="recibo__ej">Ejemplo</span></div>
+        <p class="recibo__tit">Recibo de pago</p>
+        <p class="recibo__num">N.º 0001<br>Fecha: 15/12/2026</p>
+        <dl class="recibo__datos">
+          <div><dt>Recibido de</dt><dd>Strategic &amp; Support</dd></div>
+          <div><dt>Concepto</dt><dd>Etapa 1: conexión a la API del sistema contable (14 h)</dd></div>
+          <div><dt>Medio de pago</dt><dd>Billetera móvil</dd></div>
+        </dl>
+        <div class="recibo__total"><span>Monto recibido</span><b>USD 210</b></div>
+        <p class="recibo__nota">Monto neto, sin retenciones. Este recibo no es una factura.</p>
+        <div class="recibo__firma"><span>Sergio Achivare</span><small>dataStudio</small></div>
+        <span class="sello" aria-hidden="true">Pagado</span>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<!-- 15. Próximos pasos -->
 <section class="slide oscuro" data-tema="oscuro" aria-roledescription="diapositiva" aria-label="Próximos pasos y contacto">
   <header class="cabecera"><img src="assets/logo-datastudio-blanco.svg" alt="dataStudio"><span>Próximos pasos</span></header>
   <div class="cuerpo dos">
